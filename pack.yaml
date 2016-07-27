@@ -1,0 +1,8 @@
+---
+name : vdx_sensor
+description : st2 content pack containing vdx sensor integrations
+keywords:
+  - vdx
+version : 0.1
+author : Darin Sikanic
+email : dsikanic@brocade.com

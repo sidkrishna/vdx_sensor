@@ -1,0 +1,12 @@
+---
+  class_name: "VDXInterfaceSensor"
+  entry_point: "vdx_interface_sensor.py"
+  description: "Sensor which monitors VDX interfaces"
+  poll_interval: 30
+  trigger_types:
+    -
+      name: "matched_no_traffic"
+      description: "Trigger which represents an interface that is operational but has no traffic"
+      payload_info:
+        - "interface_name"
+        - "interface_stats"

@@ -1,0 +1,4 @@
+---
+username: 'admin'
+password: 'password'
+base_url: 'http://172.24.86.228/rest'
