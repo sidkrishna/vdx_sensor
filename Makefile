@@ -1,9 +1,13 @@
 help:
-	@echo "  package     creates a tar.gz file"
-	@echo "  deploy     deploys pack on a remote StackStorm, requires arguments user=<your_username> and destination=<ip>"
+	@echo "  clean     removes the tar.gz file"
+	@echo "  package   creates a tar.gz file"
+	@echo "  deploy    deploys pack on a remote StackStorm, requires arguments user=<your_username> and destination=<ip>"
+
+clean:
+	rm -f vdxsensor.tar.gz
 
 package:
-	rm -f vdxsensor.tar.gz; tar -zcvf vdxsensor.tar.gz --exclude='.git' --exclude='venv' --exclude='Makefile' --exclude='vdxsensor.tar.gz' -C .. ./vdx_sensor
+	make clean; tar -zcvf vdxsensor.tar.gz --exclude='.git' --exclude='venv' --exclude='Makefile' --exclude='vdxsensor.tar.gz' -C .. ./vdx_sensor
 
 deploy:
 	make package && \
