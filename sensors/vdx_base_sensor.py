@@ -35,9 +35,7 @@ class VDXBaseSensor(PollingSensor):
                     'in_errors': interface['ifHCInErrors'],
                     'out_errors': interface['ifHCOutErrors']}
         self._logger.info("Interfaces are: %s" %(interfaces))
-        prev_interfaces = self._get_interfaces()
-        self._set_interfaces(interfaces)
-        self._do_delta(prev_interfaces, interfaces)
+        return interfaces
 
     def cleanup(self):
         pass
@@ -90,10 +88,6 @@ class VDXBaseSensor(PollingSensor):
 
         _do_poll(self)
         return interfaces
-
-    def _do_delta(self, prev_interfaces, interfaces):
-        pass
-
 
     def _dispatch_trigger(self, interface_name, interface_stats):
         trigger = self._trigger_ref

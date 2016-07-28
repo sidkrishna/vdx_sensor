@@ -1,0 +1,11 @@
+---
+  class_name: "VDXUtilisationSensor"
+  entry_point: "vdx_utilisation_sensor.py"
+  description: "Sensor which monitors the utilisation on VDX interfaces"
+  trigger_types:
+    -
+      name: "matched_utilisation_threshold"
+      description: "Trigger which represents an interface that has reached a threshold of utilisation"
+      payload_info:
+        - "interface_name"
+        - "interface_stats"

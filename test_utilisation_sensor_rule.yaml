@@ -1,0 +1,14 @@
+---
+  name: "test_utilisation_sensor_rule"
+  enabled: true
+  description: "Test Utilisation Sensor"
+
+  trigger:
+    type: vdx_sensor.matched_utilisation_threshold
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "{{trigger.interface_name}} with {{trigger.interface_stats}} when {{trigger.metric}} reached {{trigger.metric_value}}" >> /home/vagrant/test_utilisation_sensor.out

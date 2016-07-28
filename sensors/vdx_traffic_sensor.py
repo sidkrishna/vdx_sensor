@@ -18,6 +18,12 @@ class VDXTrafficSensor(VDXBaseSensor):
         self._trigger_ref = 'vdx_sensor.matched_no_traffic'
         self._logger = self._sensor_service.get_logger(__name__)
 
+    def poll(self):
+        interfaces = super(VDXTrafficSensor, self).poll()
+        prev_interfaces = self._get_interfaces()
+        self._set_interfaces(interfaces)
+        self._do_delta(prev_interfaces, interfaces)
+
     def _set_interfaces(self, interfaces):
         if hasattr(self._sensor_service, 'set_value'):
             self._sensor_service.set_value(name='vdx_traffic_sensor', value=interfaces)
