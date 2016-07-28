@@ -19,6 +19,7 @@ class VDXTrafficSensor(VDXBaseSensor):
         self._logger = self._sensor_service.get_logger(__name__)
 
     def poll(self):
+        self._logger.info("Traffic Sensor Polling")
         interfaces = super(VDXTrafficSensor, self).poll()
         prev_interfaces = self._get_interfaces()
         self._set_interfaces(interfaces)

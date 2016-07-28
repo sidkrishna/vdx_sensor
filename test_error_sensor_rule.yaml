@@ -1,0 +1,14 @@
+---
+  name: "test_error_sensor_rule"
+  enabled: true
+  description: "Test Error Sensor"
+
+  trigger:
+    type: vdx_sensor.matched_error_threshold
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "{{trigger.interface_name}} with {{trigger.interface_stats}}" >> /home/vagrant/test_error_sensor.out

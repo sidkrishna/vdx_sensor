@@ -9,3 +9,5 @@
       payload_info:
         - "interface_name"
         - "interface_stats"
+        - "metric"
+        - "metric_value"

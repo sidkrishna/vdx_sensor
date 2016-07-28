@@ -10,10 +10,11 @@ sensor_utilisation:
   metric_thresholds:
     in_unicast: 50
     out_unicast: 50
-    in_multicast: 50
+    in_multicast: 3
     out_multicast: 50
     in_broadcast: 50
     out_broadcast: 50
 sensor_error:
   poll_interval: 30
-  threshold: 60
+  in_errors: 50
+  out_errors: 60

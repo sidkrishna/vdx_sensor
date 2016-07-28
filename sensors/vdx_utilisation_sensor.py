@@ -19,13 +19,14 @@ class VDXUtilisationSensor(VDXBaseSensor):
         self._logger = self._sensor_service.get_logger(__name__)
 
     def poll(self):
+        self._logger.info("Utilisation Sensor Polling")
         interfaces = super(VDXUtilisationSensor, self).poll()
         self._check_threshold(interfaces)
 
     def _check_threshold(self, interfaces):
         for interface_name, interface_stats in interfaces.iteritems():
-            for metric, metric_value in config['sensor_utilisation']['metric_thresholds'].iteritems():
-                if interface_stats[metric] > metric_value:
+            for metric, metric_value in self._config['sensor_utilisation']['metric_thresholds'].iteritems():
+                if int(interface_stats[metric]) > int(metric_value):
                     self._dispatch_trigger(interface_name, interfaces[interface_name], metric, metric_value)
 
     def _dispatch_trigger(self, interface_name, interface_stats, metric, metric_value):
