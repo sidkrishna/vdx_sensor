@@ -5,21 +5,16 @@ from distutils.util import strtobool
 from dicttoxml import dicttoxml
 import ast
 
-__all__ = [
-    'VDXInterfaceSensor'
-]
-
-class VDXInterfaceSensor(PollingSensor):
+class VDXBaseSensor(PollingSensor):
     def __init__(self, sensor_service, config=None, poll_interval=None):
-        super(VDXInterfaceSensor, self).__init__(sensor_service=sensor_service,
+        super(VDXBaseSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
-        self._trigger_ref = 'vdx_sensor.matched_no_traffic'
-        self._logger = self._sensor_service.get_logger(__name__)
+        self._base_config = self._config['base_config']
 
     def setup(self):
-        self._session = self._setup_session(self._config['username'], self._config['password'])
-        self._base_url = self._config['base_url']
+        self._session = self._setup_session(self._base_config['username'], self._base_config['password'])
+        self._base_url = self._base_config['base_url']
 
     def poll(self):
         data = self._poll_device()
@@ -28,7 +23,17 @@ class VDXInterfaceSensor(PollingSensor):
         for interface in data:
             if 'hardware-type' in interface:
                 if interface['if-state'] == 'up' and interface['line-protocol-state'] == 'up':
-                    interfaces[interface['interface-name']] = {'in': interface['ifHCInOctets'], 'out': interface['ifHCOutOctets']}
+                    interfaces[interface['interface-name']] = \
+                    { 'in_octets': interface['ifHCInOctets'],
+                    'out_octets': interface['ifHCOutOctets'],
+                    'in_unicast': interface['ifHCInUcastPkts'],
+                    'out_unicast': interface['ifHCOutUcastPkts'],
+                    'in_multicast': interface['ifHCInMulticastPkts'],
+                    'out_multicast': interface['ifHCOutMulticastPkts'],
+                    'in_broadcast': interface['ifHCInBroadcastPkts'],
+                    'out_broadcast': interface['ifHCOutBroadcastPkts'],
+                    'in_errors': interface['ifHCInErrors'],
+                    'out_errors': interface['ifHCOutErrors']}
         self._logger.info("Interfaces are: %s" %(interfaces))
         prev_interfaces = self._get_interfaces()
         self._set_interfaces(interfaces)
@@ -86,23 +91,8 @@ class VDXInterfaceSensor(PollingSensor):
         _do_poll(self)
         return interfaces
 
-    def _set_interfaces(self, interfaces):
-        if hasattr(self._sensor_service, 'set_value'):
-            self._sensor_service.set_value(name='vdx_sensor_interfaces', value=interfaces)
-
-    def _get_interfaces(self):
-        if hasattr(self._sensor_service, 'get_value'):
-            interfaces = self._sensor_service.get_value(name='vdx_sensor_interfaces')
-            if interfaces:
-                return ast.literal_eval(interfaces)
-
     def _do_delta(self, prev_interfaces, interfaces):
-        self._logger.info("Previous Interfaces are: %s" %(prev_interfaces))
-        self._logger.info("Current Interfaces are: %s" %(interfaces))
-        for interface_name, interface_stats in interfaces.iteritems():
-            if interface_name in prev_interfaces:
-                if interface_stats['in'] == prev_interfaces[interface_name]['in']:
-                    self._dispatch_trigger(interface_name, interfaces[interface_name])
+        pass
 
 
     def _dispatch_trigger(self, interface_name, interface_stats):

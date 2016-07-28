@@ -1,4 +1,13 @@
 ---
-username: 'admin'
-password: 'password'
-base_url: 'http://172.24.86.228/rest'
+base_config:
+  username: 'admin'
+  password: 'password'
+  base_url: 'http://172.24.86.228/rest'
+sensor_traffic:
+  poll_interval: 30
+sensor_utilisation:
+  poll_interval: 30
+  threshold: 50
+sensor_error:
+  poll_interval: 30
+  threshold: 60
