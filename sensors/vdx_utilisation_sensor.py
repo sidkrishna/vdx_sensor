@@ -11,7 +11,7 @@ __all__ = [
 
 class VDXUtilisationSensor(VDXBaseSensor):
     def __init__(self, sensor_service, config=None, poll_interval=None):
-        poll_interval = config['sensor_traffic'].get('poll_interval', 30)
+        poll_interval = config['sensor_utilisation'].get('poll_interval', 30)
         super(VDXUtilisationSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
