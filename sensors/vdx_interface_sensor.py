@@ -2,6 +2,7 @@ from st2reactor.sensor.base import PollingSensor
 import requests
 import xmltodict
 from distutils.util import strtobool
+from dicttoxml import dicttoxml
 import ast
 
 __all__ = [
@@ -21,28 +22,17 @@ class VDXInterfaceSensor(PollingSensor):
         self._base_url = self._config['base_url']
 
     def poll(self):
-        try:
-            _url = self._base_url + "/operational-state/get-interface-detail"
-            _r = self._session.post(_url, data={}, timeout=30)
-        except requests.exceptions.RequestException as e:
-            self._logger.exception('HTTP POST unexpected error')
-            raise e
+        data = self._poll_device()
 
-        data = xmltodict.parse(_r.content)
-        _has_more = strtobool(data['output']['has-more'])
-        if _has_more:
-            # TODO: Repeat call and add to data variable
-            pass
-        else:
-            interfaces = {}
-            for interface in data['output']['interface']:
-                if 'hardware-type' in interface:
-                    if interface['if-state'] == 'up' and interface['line-protocol-state'] == 'up':
-                        interfaces[interface['interface-name']] = {'in': interface['ifHCInOctets'], 'out': interface['ifHCOutOctets']}
-            self._logger.info("Interfaces are: %s" %(interfaces))
-            prev_interfaces = self._get_interfaces()
-            self._set_interfaces(interfaces)
-            self._do_delta(prev_interfaces, interfaces)
+        interfaces = {}
+        for interface in data:
+            if 'hardware-type' in interface:
+                if interface['if-state'] == 'up' and interface['line-protocol-state'] == 'up':
+                    interfaces[interface['interface-name']] = {'in': interface['ifHCInOctets'], 'out': interface['ifHCOutOctets']}
+        self._logger.info("Interfaces are: %s" %(interfaces))
+        prev_interfaces = self._get_interfaces()
+        self._set_interfaces(interfaces)
+        self._do_delta(prev_interfaces, interfaces)
 
     def cleanup(self):
         pass
@@ -61,6 +51,40 @@ class VDXInterfaceSensor(PollingSensor):
         s.auth = (username, password)
         s.headers.update({"Accept": "application/vnd.configuration.resource+xml"})
         return s
+
+    def _poll_device(self):
+        interfaces = []
+
+        def _do_poll(parent, payload={}):
+            try:
+                _url = parent._base_url + "/operational-state/get-interface-detail"
+                _r = parent._session.post(_url, data=payload, timeout=30)
+            except requests.exceptions.RequestException as e:
+                parent._logger.exception('HTTP POST unexpected error')
+                raise e
+
+            content = xmltodict.parse(_r.content)
+
+            parent._logger.info("Content is: %s" %(content))
+
+            if 'interface' in content['output']:
+                interfaces.extend(content['output']['interface'])
+
+            _has_more = strtobool(content['output']['has-more'])
+            if _has_more:
+                last_interface = content['output']['interface'][-1]
+                payload = {
+                    'get-interface-detail': {
+                        'last-rcvd-interface': {
+                            'interface-type': last_interface['interface-type'],
+                            'interface-name': last_interface['interface-name']
+                        }
+                    }
+                }
+                _do_poll(parent, dicttoxml(payload))
+
+        _do_poll(self)
+        return interfaces
 
     def _set_interfaces(self, interfaces):
         if hasattr(self._sensor_service, 'set_value'):
