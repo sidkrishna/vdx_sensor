@@ -36,8 +36,8 @@ class VDXTrafficSensor(VDXBaseSensor):
                 return ast.literal_eval(interfaces)
 
     def _do_delta(self, prev_interfaces, interfaces):
-        self._logger.info("Previous Interfaces are: %s" %(prev_interfaces))
-        self._logger.info("Current Interfaces are: %s" %(interfaces))
+        self._logger.debug("Previous Interfaces are: %s" %(prev_interfaces))
+        self._logger.debug("Current Interfaces are: %s" %(interfaces))
         for interface_name, interface_stats in interfaces.iteritems():
             if interface_name in prev_interfaces:
                 if interface_stats['in_unicast'] == prev_interfaces[interface_name]['in_unicast']:

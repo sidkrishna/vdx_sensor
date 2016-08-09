@@ -34,7 +34,7 @@ class VDXBaseSensor(PollingSensor):
                     'out_broadcast': interface['ifHCOutBroadcastPkts'],
                     'in_errors': interface['ifHCInErrors'],
                     'out_errors': interface['ifHCOutErrors']}
-        self._logger.info("Interfaces are: %s" %(interfaces))
+        self._logger.debug("Interfaces are: %s" %(interfaces))
         return interfaces
 
     def cleanup(self):
@@ -68,7 +68,7 @@ class VDXBaseSensor(PollingSensor):
 
             content = xmltodict.parse(_r.content)
 
-            parent._logger.info("Content is: %s" %(content))
+            parent._logger.debug("Content is: %s" %(content))
 
             if 'interface' in content['output']:
                 interfaces.extend(content['output']['interface'])
