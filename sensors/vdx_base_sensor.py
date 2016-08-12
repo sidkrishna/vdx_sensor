@@ -84,7 +84,7 @@ class VDXBaseSensor(PollingSensor):
                         }
                     }
                 }
-                _do_poll(parent, dicttoxml(payload))
+                _do_poll(parent, dicttoxml(payload, root=False, attr_type=False))
 
         _do_poll(self)
         return interfaces

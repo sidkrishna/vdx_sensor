@@ -1,3 +1,4 @@
 requests
 xmltodict
 dicttoxml
+/opt/stackstorm/packs/vdx_sensor/common
