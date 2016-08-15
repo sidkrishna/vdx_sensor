@@ -1,5 +1,5 @@
 from st2reactor.sensor.base import PollingSensor
-import requests
+from common.common import Connection
 import xmltodict
 from distutils.util import strtobool
 from dicttoxml import dicttoxml
@@ -11,10 +11,14 @@ class VDXBaseSensor(PollingSensor):
                                                   config=config,
                                                   poll_interval=poll_interval)
         self._base_config = self._config['base_config']
+        self._logger = self._sensor_service.get_logger(__name__)
+        self.setup()
 
     def setup(self):
-        self._session = self._setup_session(self._base_config['username'], self._base_config['password'])
-        self._base_url = self._base_config['base_url']
+        self._connection = Connection(self._logger)
+        self._connection.setup(self._base_config['device_ip'],
+                                self._base_config['username'],
+                                self._base_config['password'])
 
     def poll(self):
         data = self._poll_device()
@@ -49,22 +53,12 @@ class VDXBaseSensor(PollingSensor):
     def remove_trigger(self, trigger):
         pass
 
-    def _setup_session(self, username, password):
-        s = requests.Session()
-        s.auth = (username, password)
-        s.headers.update({"Accept": "application/vnd.configuration.resource+xml"})
-        return s
-
     def _poll_device(self):
         interfaces = []
 
         def _do_poll(parent, payload={}):
-            try:
-                _url = parent._base_url + "/operational-state/get-interface-detail"
-                _r = parent._session.post(_url, data=payload, timeout=30)
-            except requests.exceptions.RequestException as e:
-                parent._logger.exception('HTTP POST unexpected error')
-                raise e
+            _url = self._connection.get_operational_url('get-interface-detail')
+            _r = self._connection.perform_post(_url, payload)
 
             content = xmltodict.parse(_r.content)
 

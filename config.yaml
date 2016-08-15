@@ -2,7 +2,7 @@
 base_config:
   username: 'admin'
   password: 'password'
-  base_url: 'http://172.24.86.228/rest'
+  device_ip: '172.24.86.228'
 sensor_traffic:
   poll_interval: 30
 sensor_utilisation:

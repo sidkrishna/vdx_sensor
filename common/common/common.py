@@ -44,7 +44,7 @@ class Connection(object):
             if(r.status_code < 200 or r.status_code >= 300):
                 self._logger.info('Content: %s', r.content)
                 return False
-            return True
+            return r
         except requests.exceptions.RequestException as e:
             self._logger.error('HTTP PUT unexpected error')
             self._logger.error(e)
@@ -60,7 +60,7 @@ class Connection(object):
             if(r.status_code < 200 or r.status_code >= 300):
                 self._logger.info('Content: %s', r.content)
                 return False
-            return True
+            return r
         except requests.exceptions.RequestException as e:
           self._logger.error('HTTP POST unexpected error')
           self._logger.error(e)
@@ -75,7 +75,7 @@ class Connection(object):
             if(r.status_code < 200 or r.status_code >= 300):
                 self._logger.info('Content: %s', r.content)
                 return False
-            return True
+            return r
         except requests.exceptions.RequestException as e:
             self._logger.error('HTTP DELETE unexpected error')
             self._logger.error(e)
