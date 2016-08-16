@@ -1,0 +1,25 @@
+---
+  class_name: "VDXMacSensor"
+  entry_point: "vdx_mac_sensor.py"
+  description: "Sensor which monitors MAC address movement and appearence on the VDX"
+  trigger_types:
+    -
+      name: "matched_new_mac"
+      description: "Trigger which is dispatched when a new MAC address is detected"
+      payload_info:
+        - "mac_address"
+        - "mac_type"
+        - "vlan_id"
+        - "forwarding_interface_type"
+        - "forwarding_interface_name"
+    -
+      name: "matched_mac_move"
+      description: "Trigger which is dispatched when a MAC address moves from one forwarding interface to another"
+      payload_info:
+        - "mac_address"
+        - "mac_type"
+        - "vlan_id"
+        - "old_forwarding_interface_type"
+        - "old_forwarding_interface_name"
+        - "new_forwarding_interface_type"
+        - "new_forwarding_interface_name"

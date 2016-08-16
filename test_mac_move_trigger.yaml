@@ -1,0 +1,14 @@
+---
+  name: "test_mac_move_trigger"
+  enabled: true
+  description: "Test Mac Move Trigger"
+
+  trigger:
+    type: vdx_sensor.matched_mac_move
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "Mac {{trigger.mac_address}} moved from {{trigger.old_forwarding_interface_name}} on {{trigger.new_forwarding_interface_name}}" >> /home/vagrant/test_mac_move_trigger.out

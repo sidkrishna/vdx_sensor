@@ -13,3 +13,5 @@ sensor_error:
   poll_interval: 30
   in_errors: 50
   out_errors: 60
+sensor_mac:
+  poll_interval: 30

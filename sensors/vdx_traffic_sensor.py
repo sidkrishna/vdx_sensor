@@ -1,5 +1,4 @@
 from vdx_base_sensor import VDXBaseSensor
-import requests
 import xmltodict
 from distutils.util import strtobool
 from dicttoxml import dicttoxml
