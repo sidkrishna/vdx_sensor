@@ -8,7 +8,7 @@
       description: "Trigger which represents an interface that has reached a threshold of utilisation"
       payload_info:
         - "interface_name"
-        - "tx"
+        - "tx_MBps"
         - "tx_threshold"
-        - "rx"
+        - "rx_MBps"
         - "rx_threshold"

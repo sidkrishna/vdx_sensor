@@ -2,7 +2,7 @@
 base_config:
   username: 'admin'
   password: 'password'
-  device_ip: '172.24.86.228'
+  device_ip: '172.24.86.24'
 sensor_traffic:
   poll_interval: 30
 sensor_utilisation:
