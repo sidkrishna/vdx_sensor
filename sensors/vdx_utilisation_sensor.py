@@ -16,12 +16,13 @@ class VDXUtilisationSensor(VDXBaseSensor):
                                                   poll_interval=poll_interval)
         self._trigger_ref = 'vdx_sensor.matched_utilisation_threshold'
         self._logger = self._sensor_service.get_logger(__name__)
+        self._polls = 0
 
     def poll(self):
         self._logger.info("Utilisation Sensor Polling")
 
         data = self._poll_device()
-        self._set_polls()
+        self._polls = self._polls + 1
 
         interfaces = {}
         for interface in data:
@@ -68,20 +69,9 @@ class VDXUtilisationSensor(VDXBaseSensor):
             if metrics:
                 return ast.literal_eval(metrics)
 
-    def _set_polls(self):
-        polls = self._get_polls()
-        if polls is None:
-            polls = 1
-        else:
-            polls = int(polls) + 1
-        if hasattr(self._sensor_service, 'set_value'):
-            self._sensor_service.set_value(name='polls', value=polls)
-
     def _get_polls(self):
-        if hasattr(self._sensor_service, 'get_value'):
-            polls = self._sensor_service.get_value(name='polls')
-            if polls:
-                return int(polls)
+        self._logger.info("Polls are: %s" %(self._polls))
+        return self._polls
 
     def _check_threshold(self, metrics):
         for interface_name, interface_stats in metrics.iteritems():
