@@ -1,0 +1,14 @@
+---
+  name: "test_error_sensor_rule"
+  enabled: true
+  description: "Test Error Sensor"
+
+  trigger:
+    type: vdx_sensor.matched_error_threshold
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Errors detected on interface {{trigger.interface_type}} {{trigger.interface_name}}, Tx error count {{trigger.tx_errors}}, Rx error count {{trigger.rx_errors}} in the last {{trigger.poll_interval}} seconds" >> /home/vagrant/test_error_sensor.out

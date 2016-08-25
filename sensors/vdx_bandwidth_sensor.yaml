@@ -1,0 +1,14 @@
+---
+  class_name: "VDXBandwidthSensor"
+  entry_point: "vdx_bandwidth_sensor.py"
+  description: "Sensor which stores the max bandwidth seen on VDX interfaces"
+  trigger_types:
+    -
+      name: "store_max_bandwidth"
+      description: "Trigger to store max bandwidth values in VDX interfaces"
+      payload_info:
+        - "interface_name"
+        - "tx_MBps"
+        - "tx_threshold"
+        - "rx_MBps"
+        - "rx_threshold"

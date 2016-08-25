@@ -1,0 +1,14 @@
+---
+  name: "test_new_mac_trigger"
+  enabled: true
+  description: "Test New Mac Trigger"
+
+  trigger:
+    type: vdx_sensor.matched_new_mac
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` New MAC Address Detected {{trigger.mac_address}} on {{trigger.forwarding_interface_type}} {{trigger.forwarding_interface_name}}" >> /home/vagrant/test_new_mac_trigger.out

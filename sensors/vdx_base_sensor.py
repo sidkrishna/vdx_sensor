@@ -28,7 +28,8 @@ class VDXBaseSensor(PollingSensor):
             if 'hardware-type' in interface:
                 if interface['if-state'] == 'up' and interface['line-protocol-state'] == 'up':
                     interfaces[interface['interface-name']] = \
-                    { 'in_octets': interface['ifHCInOctets'],
+                    { 'interface_type': interface['interface-type'], 
+                    'in_octets': interface['ifHCInOctets'],
                     'out_octets': interface['ifHCOutOctets'],
                     'in_unicast': interface['ifHCInUcastPkts'],
                     'out_unicast': interface['ifHCOutUcastPkts'],

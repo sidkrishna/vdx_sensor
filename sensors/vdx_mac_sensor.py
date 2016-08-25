@@ -79,7 +79,7 @@ class VDXMacSensor(VDXBaseSensor):
         for mac_address, mac_info in mac_addresses.iteritems():
             if mac_address in prev_mac_addresses:
                 if mac_info['forwarding_interface']['interface_name'] != prev_mac_addresses[mac_address]['forwarding_interface']['interface_name']:
-                    self._dispatch_new_mac_trigger(mac_address, mac_info, prev_mac_addresses[mac_address])
+                    self._dispatch_mac_move_trigger(mac_address, mac_info, prev_mac_addresses[mac_address])
             else:
                 self._dispatch_new_mac_trigger(mac_address, mac_info)
 

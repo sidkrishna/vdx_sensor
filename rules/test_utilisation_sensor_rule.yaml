@@ -1,0 +1,14 @@
+---
+  name: "test_utilisation_sensor_rule"
+  enabled: true
+  description: "Test Utilisation Sensor"
+
+  trigger:
+    type: vdx_sensor.matched_utilisation_threshold
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Deviation in interface utilization detected on {{trigger.interface_name}}, Current Tx(mbps) {{trigger.tx_MBps}} Tx Threshold(%) {{trigger.tx_threshold}}, Rx(mbps) {{trigger.rx_MBps}} Rx Threshold(%) {{trigger.rx_threshold}}" >> /home/vagrant/test_utilisation_sensor.out
