@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Deviation in interface utilization detected on {{trigger.interface_name}}, Current Tx(mbps) {{trigger.tx_MBps}} Tx Threshold(%) {{trigger.tx_threshold}}, Rx(mbps) {{trigger.rx_MBps}} Rx Threshold(%) {{trigger.rx_threshold}}" >> /home/vagrant/test_utilisation_sensor.out
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Deviation in Interface Utilization Detected for {{trigger.interface_name}}, Tx(Mbps) {{trigger.tx_mbps}} Tx Calculated Threshold(Mbps) {{trigger.tx_threshold}} Rx(Mbps) {{trigger.rx_mbps}} Rx Calculated Threshold(Mbps) {{trigger.rx_threshold}}" >> /home/vagrant/test_utilisation_sensor.out

@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Errors detected on interface {{trigger.interface_type}} {{trigger.interface_name}}, Tx error count {{trigger.tx_errors}}, Rx error count {{trigger.rx_errors}} in the last {{trigger.poll_interval}} seconds" >> /home/vagrant/test_error_sensor.out
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Errors Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}}, Tx Error Count {{trigger.tx_errors}}, Rx Error Count {{trigger.rx_errors}} in the last {{trigger.poll_interval}} seconds" >> /home/vagrant/test_error_sensor.out

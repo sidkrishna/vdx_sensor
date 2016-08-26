@@ -16,7 +16,6 @@ class VDXBandwidthSensor(VDXBaseSensor):
         super(VDXBandwidthSensor, self).__init__(sensor_service=sensor_service,
                                                   config=config,
                                                   poll_interval=poll_interval)
-        self._trigger_ref = 'vdx_sensor.store_max_bandwidth'
         self._logger = self._sensor_service.get_logger(__name__)
 
     def poll(self):
@@ -48,50 +47,50 @@ class VDXBandwidthSensor(VDXBaseSensor):
                     }
         
 
-        prev_metrics = self._get_metrics()
-        if prev_metrics is None:
-            self._logger.info("############ prev_metrics is None #################")
-            prev_metrics = {}
+        prev_bw_metrics = self._get_metrics()
+        if prev_bw_metrics is None:
+            self._logger.info("############ prev_bw_metrics is None #################")
+            prev_bw_metrics = {}
 
-        avg_metrics = {}
+        bw_metrics = {}
 
         for interface_name, interface_stats in interfaces.iteritems():
             interface_exists_in_prev = 0
 
-            if interface_name in prev_metrics:
+            if interface_name in prev_bw_metrics:
                 interface_exists_in_prev = 1
 
             latest_tx_max_mbps = 0
             latest_rx_max_mbps = 0
 
             if interface_exists_in_prev:
-                latest_tx_mbps = (float(float(int(interface_stats['tx_octets']) - int(prev_metrics[interface_name]['tx_last_octets']))/self._poll_interval)/(1000**2))*8
-                if latest_tx_mbps > float(prev_metrics[interface_name]['tx_max_mbps']):
+                latest_tx_mbps = (float(float(int(interface_stats['tx_octets']) - int(prev_bw_metrics[interface_name]['tx_last_octets']))/self._poll_interval)/(1000**2))*8
+                if latest_tx_mbps > float(prev_bw_metrics[interface_name]['tx_max_mbps']):
                     latest_tx_max_mbps = latest_tx_mbps
                 else:
-                    latest_tx_max_mbps = prev_metrics[interface_name]['tx_max_mbps']
+                    latest_tx_max_mbps = prev_bw_metrics[interface_name]['tx_max_mbps']
                 
-                latest_rx_mbps = (float(float(int(interface_stats['rx_octets']) - int(prev_metrics[interface_name]['rx_last_octets']))/self._poll_interval)/(1000**2))*8
-                if latest_rx_mbps > prev_metrics[interface_name]['rx_max_mbps']:
+                latest_rx_mbps = (float(float(int(interface_stats['rx_octets']) - int(prev_bw_metrics[interface_name]['rx_last_octets']))/self._poll_interval)/(1000**2))*8
+                if latest_rx_mbps > prev_bw_metrics[interface_name]['rx_max_mbps']:
                     latest_rx_max_mbps = latest_rx_mbps
                 else:
-                    latest_rx_max_mbps = prev_metrics[interface_name]['rx_max_mbps'] 
+                    latest_rx_max_mbps = prev_bw_metrics[interface_name]['rx_max_mbps'] 
 
-            avg_metrics[interface_name] = {}
-            avg_metrics[interface_name]['tx_last_octets'] = interface_stats['tx_octets']
-            avg_metrics[interface_name]['tx_max_mbps'] = latest_tx_max_mbps 
-            avg_metrics[interface_name]['rx_last_octets'] = interface_stats['rx_octets']
-            avg_metrics[interface_name]['rx_max_mbps'] = latest_rx_max_mbps
+            bw_metrics[interface_name] = {}
+            bw_metrics[interface_name]['tx_last_octets'] = interface_stats['tx_octets']
+            bw_metrics[interface_name]['tx_max_mbps'] = latest_tx_max_mbps 
+            bw_metrics[interface_name]['rx_last_octets'] = interface_stats['rx_octets']
+            bw_metrics[interface_name]['rx_max_mbps'] = latest_rx_max_mbps
 
             self._logger.info("############## Interface: %s" %(interface_name))
-            self._logger.info("############## tx_last_octets: %d" %(int(avg_metrics[interface_name]['tx_last_octets'])))
-            self._logger.info("############## tx_max_mbps: %f" %(float(avg_metrics[interface_name]['tx_max_mbps'])))
-            self._logger.info("############## rx_last_octets: %d" %(int(avg_metrics[interface_name]['rx_last_octets'])))
-            self._logger.info("############## rx_max_mbps: %f" %(float(avg_metrics[interface_name]['rx_max_mbps'])))
+            self._logger.info("############## tx_last_octets: %d" %(int(bw_metrics[interface_name]['tx_last_octets'])))
+            self._logger.info("############## tx_max_mbps: %f" %(float(bw_metrics[interface_name]['tx_max_mbps'])))
+            self._logger.info("############## rx_last_octets: %d" %(int(bw_metrics[interface_name]['rx_last_octets'])))
+            self._logger.info("############## rx_max_mbps: %f" %(float(bw_metrics[interface_name]['rx_max_mbps'])))
 
-        self._set_metrics(avg_metrics)
+        self._set_metrics(bw_metrics)
         with open('/opt/stackstorm/packs/vdx_sensor/max_bw_db.txt', 'wb') as f:
-            pickle.dump(avg_metrics, f)
+            pickle.dump(bw_metrics, f)
             f.close()
 
     def _set_metrics(self, metrics):
@@ -103,14 +102,3 @@ class VDXBandwidthSensor(VDXBaseSensor):
             metrics = self._sensor_service.get_value(name='metrics')
             if metrics:
                 return ast.literal_eval(metrics)
-
-    def _dispatch_trigger(self, interface_name, tx, tx_threshold, rx, rx_threshold):
-        trigger = self._trigger_ref
-        payload = {
-            'interface_name': interface_name,
-            'tx_MBps': tx,
-            'tx_threshold': tx_threshold,
-            'rx_MBps': rx,
-            'rx_threshold': rx_threshold
-        }
-        self._sensor_service.dispatch(trigger=trigger, payload=payload)

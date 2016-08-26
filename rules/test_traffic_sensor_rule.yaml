@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` {{trigger.interface_name}} with {{trigger.interface_stats}}" >> /home/vagrant/test_traffic_sensor.out
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` No Traffic Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}} with Rx Unicast Pkt Count {{trigger.in_unicast}}" >> /home/vagrant/test_traffic_sensor.out

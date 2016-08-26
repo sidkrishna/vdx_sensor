@@ -77,9 +77,9 @@ class VDXUtilisationSensor(VDXBaseSensor):
                         self._logger.info("############## UTIL DISPATCHING TRIGGER FOR Interface: %s" %(interface_name))
                         self._dispatch_trigger(interface_name,
                             latest_tx_mbps,
-                            self._config['sensor_utilisation']['tx_threshold'],
+                            tx_threshold,
                             latest_rx_mbps,
-                            self._config['sensor_utilisation']['rx_threshold'])
+                            rx_threshold)
 
             util_metrics[interface_name] = {}
             util_metrics[interface_name]['tx_last_octets'] = interface_stats['tx_octets']
@@ -97,13 +97,15 @@ class VDXUtilisationSensor(VDXBaseSensor):
             if metrics:
                 return ast.literal_eval(metrics)
 
-    def _dispatch_trigger(self, interface_name, tx, tx_threshold_percent, rx, rx_threshold_percent):
+    def _dispatch_trigger(self, interface_name, tx, tx_threshold, rx, rx_threshold):
         trigger = self._trigger_ref
         payload = {
             'interface_name': interface_name,
-            'tx_mbps': tx,
-            'tx_threshold': tx_threshold_percent,
-            'rx_mbps': rx,
-            'rx_threshold': rx_threshold_percent
+            'tx_mbps': round(tx,2),
+            'tx_threshold': round(tx_threshold,2),
+            'rx_mbps': round(rx,2),
+            'rx_threshold': round(rx_threshold,2)
         }
+        self._logger.info("############# INSIDE UTIL DISPATH TRIGGER FUCNTION ################")
+        self._logger.info("############## trigger REF: %s" %(trigger)) 
         self._sensor_service.dispatch(trigger=trigger, payload=payload)
