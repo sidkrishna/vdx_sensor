@@ -1,0 +1,50 @@
+---
+name: vdx_create_vlan
+pack: vdx_sensor
+runner_type: run-python
+description: Configure a VLAN on Brocade VDX Switches
+enabled: true
+entry_point: vdx_create_vlan.py
+parameters:
+  interface_type:
+    type: string
+    description: Interface Type [gigabitethernet, tengigabitethernet, fortygigabitethernet, hundredgigabitethernet]
+    required: true
+  interface:
+    type: string
+    description: Interface number rbridge-id/slot/port
+    required: true
+  mode:
+    type: string
+    enum:
+      - access
+      - trunk
+    required: true
+    description: VLAN mode
+  vlan:
+    type: integer
+    description: VLAN to configure
+    required: true
+  device_ip:
+    type: string
+    description: Device to configure
+    required: true
+  username:
+    type: string
+    description: login username
+    required: true
+  password:
+    type: string
+    description: login password
+    required: true
+  protocol:
+    type: string
+    enum:
+      - http
+      - https
+    default: http
+    description: HTTP or HTTPS
+  port:
+    type: integer
+    description: Port number of webservice on VDX
+    default: 80
