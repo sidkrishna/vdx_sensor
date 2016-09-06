@@ -1,0 +1,14 @@
+---
+  name: "test_traffic_sensor_rule"
+  enabled: true
+  description: "Test Traffic Sensor"
+
+  trigger:
+    type: vdx_sensor.matched_no_traffic
+
+  criteria: {}
+
+  action:
+    ref: core.local_sudo
+    parameters:
+      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` No Traffic Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}} with Rx Unicast Pkt Count {{trigger.in_unicast}}" >> /home/vagrant/test_traffic_sensor.out

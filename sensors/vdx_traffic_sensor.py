@@ -39,5 +39,15 @@ class VDXTrafficSensor(VDXBaseSensor):
         self._logger.debug("Current Interfaces are: %s" %(interfaces))
         for interface_name, interface_stats in interfaces.iteritems():
             if interface_name in prev_interfaces:
-                if interface_stats['in_unicast'] == prev_interfaces[interface_name]['in_unicast']:
-                    self._dispatch_trigger(interface_name, interfaces[interface_name])
+                if (interface_stats['in_unicast'] == prev_interfaces[interface_name]['in_unicast']): #\
+#                and (interface_stats['in_broadcast'] == prev_interfaces[interface_name]['in_broadcast']):
+                    self._dispatch_trigger(interface_stats['interface_type'], interface_name, interface_stats['in_unicast'])
+
+    def _dispatch_trigger(self, interface_type, interface_name, in_unicast):
+        trigger = self._trigger_ref
+        payload = {
+            'interface_type': interface_type,
+            'interface_name': interface_name,
+            'in_unicast': in_unicast
+        }
+        self._sensor_service.dispatch(trigger=trigger, payload=payload)

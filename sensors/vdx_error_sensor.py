@@ -23,7 +23,51 @@ class VDXErrorSensor(VDXBaseSensor):
         self._check_threshold(interfaces)
 
     def _check_threshold(self, interfaces):
-        for interface_name, interface_stats in interfaces.iteritems():
-            if int(interface_stats['in_errors']) > int(self._config['sensor_error']['in_errors']) or \
-            int(interface_stats['out_errors']) > int(self._config['sensor_error']['out_errors']):
-                self._dispatch_trigger(interface_name, interfaces[interface_name])
+
+         prev_error_metrics = self._get_metrics()
+         if prev_error_metrics is None:
+            self._logger.info("############ prev_metrics is None #################")
+            prev_error_metrics = {}
+
+         error_metrics = {}
+
+         for interface_name, interface_stats in interfaces.iteritems():
+             interface_exists_in_prev = 0
+
+             if interface_name in prev_error_metrics:
+                 interface_exists_in_prev = 1
+
+             if interface_exists_in_prev:
+                 latest_tx_errors = int(interface_stats['out_errors']) - int(prev_error_metrics[interface_name]['out_errors'])
+                 latest_rx_errors = int(interface_stats['in_errors']) - int(prev_error_metrics[interface_name]['in_errors'])
+
+                 if latest_tx_errors > int(self._config['sensor_error']['out_errors']) \
+                 or latest_rx_errors > int(self._config['sensor_error']['in_errors']):
+                     self._dispatch_trigger(interface_stats['interface_type'], interface_name, latest_tx_errors, latest_rx_errors, self._config['sensor_error']['poll_interval'])
+
+             error_metrics[interface_name] = {}
+             error_metrics[interface_name]['out_errors'] = interface_stats['out_errors']
+             error_metrics[interface_name]['in_errors'] = interface_stats['in_errors']
+
+         self._set_metrics(error_metrics)
+
+    def _set_metrics(self, metrics):
+        if hasattr(self._sensor_service, 'set_value'):
+            self._sensor_service.set_value(name='metrics', value=metrics)
+
+    def _get_metrics(self):
+        if hasattr(self._sensor_service, 'get_value'):
+            metrics = self._sensor_service.get_value(name='metrics')
+            if metrics:
+                return ast.literal_eval(metrics)
+
+    def _dispatch_trigger(self, interface_type, interface_name, tx_errors, rx_errors, poll_interval):
+        trigger = self._trigger_ref
+        payload = {
+            'interface_type': interface_type,
+            'interface_name': interface_name,
+            'tx_errors': tx_errors,
+            'rx_errors': rx_errors,
+            'poll_interval': poll_interval 
+        }
+        self._sensor_service.dispatch(trigger=trigger, payload=payload)
