@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` No Traffic Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}} with Rx Unicast Pkt Count {{trigger.in_unicast}}" >> /home/vagrant/test_traffic_sensor.out
+      cmd: "curl -H \"Accept: application/json\" -H \"Content-type: application/json\" -H \"x-brocade-wm-secret-key: 578bdb5a53379958105bdf78\" -X POST -d '{\"category\":\"Interface Traffic\", \"severity\":\"Info\", \"description\":\"No Traffic Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}} with Rx Unicast Pkt Count {{trigger.in_unicast}}\"}' https://brocade.47billion.com/api/v1/wm/alarms"

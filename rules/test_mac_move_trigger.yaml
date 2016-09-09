@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` MAC Move Detected {{trigger.mac_address}} moved from {{trigger.old_forwarding_interface_type}} {{trigger.old_forwarding_interface_name}} to {{trigger.new_forwarding_interface_type}} {{trigger.new_forwarding_interface_name}}" >> /home/vagrant/test_mac_move_trigger.out
+      cmd: "curl -H \"Accept: application/json\" -H \"Content-type: application/json\" -H \"x-brocade-wm-secret-key: 578bdb5a53379958105bdf78\" -X POST -d '{\"category\":\"MAC Address Move\", \"severity\":\"Info\", \"description\":\"MAC Move Detected {{trigger.mac_address}} moved from {{trigger.old_forwarding_interface_type}} {{trigger.old_forwarding_interface_name}} to {{trigger.new_forwarding_interface_type}} {{trigger.new_forwarding_interface_name}}\"}' https://brocade.47billion.com/api/v1/wm/alarms"

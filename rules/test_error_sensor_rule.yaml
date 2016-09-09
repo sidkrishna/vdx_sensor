@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Errors Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}}, Tx Error Count {{trigger.tx_errors}}, Rx Error Count {{trigger.rx_errors}} in the last {{trigger.poll_interval}} seconds" >> /home/vagrant/test_error_sensor.out
+      cmd: "curl -H \"Accept: application/json\" -H \"Content-type: application/json\" -H \"x-brocade-wm-secret-key: 578bdb5a53379958105bdf78\" -X POST -d '{\"category\":\"Interface Errors\", \"severity\":\"Error\", \"description\":\"Errors Detected on Interface {{trigger.interface_type}} {{trigger.interface_name}}, Tx Error Count {{trigger.tx_errors}}, Rx Error Count {{trigger.rx_errors}} in the last {{trigger.poll_interval}} seconds\"}' https://brocade.47billion.com/api/v1/wm/alarms" 

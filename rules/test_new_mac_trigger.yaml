@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` New MAC Address Detected {{trigger.mac_address}} on {{trigger.forwarding_interface_type}} {{trigger.forwarding_interface_name}}" >> /home/vagrant/test_new_mac_trigger.out
+      cmd: "curl -H \"Accept: application/json\" -H \"Content-type: application/json\" -H \"x-brocade-wm-secret-key: 578bdb5a53379958105bdf78\" -X POST -d '{\"category\":\"New MAC Address\", \"severity\":\"Info\", \"description\":\"New MAC Address Detected {{trigger.mac_address}} on {{trigger.forwarding_interface_type}} {{trigger.forwarding_interface_name}}\"}' https://brocade.47billion.com/api/v1/wm/alarms" 

@@ -11,4 +11,4 @@
   action:
     ref: core.local_sudo
     parameters:
-      cmd: echo "`date \"+%Y-%m-%d %H:%M:%S\"` Deviation in Interface Utilization Detected for {{trigger.interface_name}}, Tx(Mbps) {{trigger.tx_mbps}} Tx Calculated Threshold(Mbps) {{trigger.tx_threshold}} Rx(Mbps) {{trigger.rx_mbps}} Rx Calculated Threshold(Mbps) {{trigger.rx_threshold}}" >> /home/vagrant/test_utilisation_sensor.out
+      cmd: "curl -H \"Accept: application/json\" -H \"Content-type: application/json\" -H \"x-brocade-wm-secret-key: 578bdb5a53379958105bdf78\" -X POST -d '{\"category\":\"Interface Utilization\", \"severity\":\"Warning\", \"description\":\"Deviation in Interface Utilization Detected for {{trigger.interface_name}}, Tx(Mbps) {{trigger.tx_mbps}} Tx Calculated Threshold(Mbps) {{trigger.tx_threshold}} Rx(Mbps) {{trigger.rx_mbps}} Rx Calculated Threshold(Mbps) {{trigger.rx_threshold}}\"}' https://brocade.47billion.com/api/v1/wm/alarms"

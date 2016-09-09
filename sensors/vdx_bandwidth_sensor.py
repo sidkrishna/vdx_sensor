@@ -20,19 +20,19 @@ class VDXBandwidthSensor(VDXBaseSensor):
 
     def poll(self):
         
+        self._logger.info("Bandwidth Sensor Polling")
+        
         with open('/opt/stackstorm/packs/vdx_sensor/config.yaml', 'r') as f:
             config = yaml.load(f)
             active = 0
             active = int(config['sensor_bandwidth']['active_passive'])
             f.close()
         
-        self._logger.info("############# Bandwidth Sensor active: %d ################" %(active))  
+        self._logger.debug("Bandwidth sensor active status : %d " %(active))  
         
         if active == 0:
-            self._logger.info("############# RETURNING SINCE SENSOR IS PASSIVE ################")
+            self._logger.debug("Bandwidth sensor is passive, returning")
             return
-
-        self._logger.info("############# Bandwidth Sensor Polling ################")
 
         data = self._poll_device()
 
@@ -49,10 +49,11 @@ class VDXBandwidthSensor(VDXBaseSensor):
 
         prev_bw_metrics = self._get_metrics()
         if prev_bw_metrics is None:
-            self._logger.info("############ prev_bw_metrics is None #################")
+            self._logger.debug("prev_bw_metrics is None")
             prev_bw_metrics = {}
 
         bw_metrics = {}
+        max_db_metrics = {}
 
         for interface_name, interface_stats in interfaces.iteritems():
             interface_exists_in_prev = 0
@@ -76,21 +77,26 @@ class VDXBandwidthSensor(VDXBaseSensor):
                 else:
                     latest_rx_max_mbps = prev_bw_metrics[interface_name]['rx_max_mbps'] 
 
+                max_db_metrics[interface_name] = {}
+                max_db_metrics[interface_name]['tx_max_mbps'] = latest_tx_max_mbps
+                max_db_metrics[interface_name]['rx_max_mbps'] = latest_rx_max_mbps
+
+
             bw_metrics[interface_name] = {}
             bw_metrics[interface_name]['tx_last_octets'] = interface_stats['tx_octets']
             bw_metrics[interface_name]['tx_max_mbps'] = latest_tx_max_mbps 
             bw_metrics[interface_name]['rx_last_octets'] = interface_stats['rx_octets']
             bw_metrics[interface_name]['rx_max_mbps'] = latest_rx_max_mbps
 
-            self._logger.info("############## Interface: %s" %(interface_name))
-            self._logger.info("############## tx_last_octets: %d" %(int(bw_metrics[interface_name]['tx_last_octets'])))
-            self._logger.info("############## tx_max_mbps: %f" %(float(bw_metrics[interface_name]['tx_max_mbps'])))
-            self._logger.info("############## rx_last_octets: %d" %(int(bw_metrics[interface_name]['rx_last_octets'])))
-            self._logger.info("############## rx_max_mbps: %f" %(float(bw_metrics[interface_name]['rx_max_mbps'])))
+            self._logger.debug("Interface: %s" %(interface_name))
+            self._logger.debug("tx_last_octets: %d" %(int(bw_metrics[interface_name]['tx_last_octets'])))
+            self._logger.debug("tx_max_mbps: %f" %(float(bw_metrics[interface_name]['tx_max_mbps'])))
+            self._logger.debug("rx_last_octets: %d" %(int(bw_metrics[interface_name]['rx_last_octets'])))
+            self._logger.debug("rx_max_mbps: %f" %(float(bw_metrics[interface_name]['rx_max_mbps'])))
 
         self._set_metrics(bw_metrics)
         with open('/opt/stackstorm/packs/vdx_sensor/max_bw_db.txt', 'wb') as f:
-            pickle.dump(bw_metrics, f)
+            pickle.dump(max_db_metrics, f)
             f.close()
 
     def _set_metrics(self, metrics):

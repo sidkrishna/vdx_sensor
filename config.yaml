@@ -4,7 +4,7 @@ base_config:
   username: admin
 sensor_bandwidth:
   active_passive: 0
-  poll_interval: 30
+  poll_interval: 15
 sensor_error:
   in_errors: 50
   out_errors: 60
@@ -12,7 +12,7 @@ sensor_error:
 sensor_mac:
   poll_interval: 30
 sensor_traffic:
-  poll_interval: 30
+  poll_interval: 3600
 sensor_utilisation:
   poll_interval: 30
   rx_threshold: 50

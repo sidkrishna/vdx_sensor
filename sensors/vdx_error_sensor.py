@@ -26,7 +26,7 @@ class VDXErrorSensor(VDXBaseSensor):
 
          prev_error_metrics = self._get_metrics()
          if prev_error_metrics is None:
-            self._logger.info("############ prev_metrics is None #################")
+            self._logger.debug("prev_metrics is None")
             prev_error_metrics = {}
 
          error_metrics = {}
